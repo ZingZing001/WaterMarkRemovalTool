@@ -75,8 +75,6 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 
 These two functions are designed to detect black or near-black text (or watermarks) in an image. You can adjust the thresholds to adapt to different kinds of watermarks.
 
----
-
 #### **`is_text_color_rgb`**
 This function identifies black or near-black pixels in an image using the RGB colour space.
 
