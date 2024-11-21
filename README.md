@@ -71,6 +71,78 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 ### Command Line Mode (for testing or integration)
 - You can use the functions in `removerPdf.py` and `removerWord.py` programmatically.
 
+### Function Explanation: `is_text_color_rgb` and `is_text_color_hsv`
+
+These two functions are designed to detect black or near-black text (or watermarks) in an image. You can adjust the thresholds to adapt to different kinds of watermarks.
+
+---
+
+#### **`is_text_color_rgb`**
+This function identifies black or near-black pixels in an image using the RGB colour space.
+
+##### **How it works:**
+1. **RGB Thresholding:** 
+   - The function checks if the intensity values of all three channels (Red, Green, and Blue) are less than `140`.
+   - Pixels meeting this condition are considered "dark," representing text or watermark content.
+
+2. **Adjusting for Watermarks:**
+   - **Increase the threshold (`140 → higher`)**: To detect lighter shades of gray or faint black text.
+   - **Decrease the threshold (`140 → lower`)**: To focus on strictly darker pixels, excluding lighter marks.
+
+3. **Example Use Case:**
+   - Ideal for detecting solid black or grayscale text-based watermarks.
+
+##### **Code:**
+```python
+def is_text_color_rgb(img_array):
+    # Identify black or near-black pixels in RGB color space
+    mask = (
+        (img_array[:, :, 0] < 140) &  # Red channel threshold
+        (img_array[:, :, 1] < 140) &  # Green channel threshold
+        (img_array[:, :, 2] < 140)    # Blue channel threshold
+    )
+    return mask
+```
+
+#### **is_text_color_hsv**
+This function identifies black-like or dark regions in the HSV (Hue, Saturation, Value) color space, which is more robust for varying lighting and color tones.
+
+#### **How it works:**
+1. **HSV Conversion:**
+    - The image is converted to the HSV color space.
+	- Hue (H) is ignored because black is not dependent on specific colors. Instead, Saturation (S) and Value (V) are analyzed.
+2. **Thresholding:**
+    - Saturation (S < 40): Ensures the region is not colorful (low saturation means grayscale or black).
+    - Value (V < 160): Ensures the region is dark (lower values indicate darker pixels).
+3. **Adjusting for Watermarks**:
+    - Increase Saturation Threshold (S < 40 → higher): Includes slightly tinted watermarks.
+    - Decrease Saturation Threshold (S < 40 → lower): Focuses strictly on grayscale or black regions.
+    - Increase Value Threshold (V < 160 → higher): Includes lighter shades of text or watermark.
+    - Decrease Value Threshold (V < 160 → lower): Focuses strictly on darker marks.
+4. **Example Use Case:**
+    - Particularly useful for detecting faintly tinted or dark watermarks.
+
+#### **Code:**
+```python
+def is_text_color_hsv(img_array):
+    # Convert the RGB image to HSV
+    hsv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2HSV)
+
+    # Identify dark or black-like regions in HSV space
+    mask = (hsv_img[:, :, 1] < 40) & (hsv_img[:, :, 2] < 160)  # Saturation and Value thresholds
+    return mask
+```
+
+### Customizing for Different Watermarks
+
+By modifying the threshold values, you can adapt the functions to detect specific types of watermarks:
+1. **Light Gray Watermarks:**
+    - Increase 140 in is_text_color_rgb and V < 160 in is_text_color_hsv to include lighter shades.
+2. **Faint Colored Watermarks:**
+    - Increase the S threshold in is_text_color_hsv to include more color.
+3. **Dark and Clear Watermarks:**
+    - Lower all thresholds (R/G/B < 140, S < 40, V < 160) to focus on darker and clearer watermarks.
+      
 ---
 
 ## File Structure
