@@ -1,0 +1,7 @@
+PyQt5
+pymupdf
+pdf2image
+numpy
+scikit-image
+Pillow
+python-docx
