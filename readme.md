@@ -1,5 +1,10 @@
 # Watermark Remover Tool
 
+<!-- language -->
+
+[English](README.md) | [简体中文](README_zh-CN.md)
+
+
 A powerful and user-friendly tool for removing watermarks from PDF and Word documents. This application provides both fast and deep removal modes, ensuring optimal results for various watermark types.
 
 ---
