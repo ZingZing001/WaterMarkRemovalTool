@@ -96,6 +96,16 @@ python-docx
 ```
 Install these dependencies using `pip install -r requirements.txt`.
 
+
+---
+
+## Exampler
+- Before
+![Screenshot 2024-11-21 at 16 20 55](https://github.com/user-attachments/assets/9f95b3db-08e3-4e10-a9da-293cda385d2a)
+
+- After
+![Screenshot 2024-11-21 at 16 20 57](https://github.com/user-attachments/assets/978c33b7-eb59-4de3-b71b-ddef5c4b9b24)
+
 ---
 
 ## Known Issues
