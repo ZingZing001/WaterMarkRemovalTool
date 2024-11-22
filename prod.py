@@ -1,4 +1,7 @@
 import os
+import threading
+import time
+from functools import partial
 from PyQt5 import QtWidgets, QtCore
 from removerWord import remove_watermark_from_word
 from removerPdf import remove_layer_watermarks, remove_watermark_from_pdf
@@ -12,6 +15,7 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
+        # Create layout and widgets
         layout = QtWidgets.QVBoxLayout()
 
         self.label = QtWidgets.QLabel("Select a folder to load files for processing")
@@ -67,7 +71,7 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
             self.file_paths.clear()
             self.file_list_widget.clear()
             files = os.listdir(folder_path)
-            sorted_files = sorted(files)
+            sorted_files = sorted(files)  # Sort files alphabetically
             for file_name in sorted_files:
                 file_path = os.path.join(folder_path, file_name)
                 if os.path.isfile(file_path) and (file_name.endswith(".pdf") or file_name.endswith(".docx")):
@@ -97,54 +101,64 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(self, "No Files Selected", "Please select files to process.")
             return
 
+        # Disable buttons during processing
+        self.toggle_buttons(False)
+
         removal_mode = self.removal_mode_dropdown.currentText()
         print(f"Starting removal in {removal_mode} mode for {len(selected_files)} files.")
 
-        avg_time_per_file = 5 if removal_mode == "Fast Removal" else 15
+        # Estimate the processing time based on removal mode
+        avg_time_per_file = 5 if removal_mode == "Fast Removal" else 15  # 5 seconds for Fast, 15 seconds for Deep
         estimated_time = len(selected_files) * avg_time_per_file
         self.estimated_time_label.setText(f"Estimated Time: ~{estimated_time} seconds")
         self.progress_bar.setMaximum(len(selected_files))
         self.progress_bar.setValue(0)
 
-        self.disable_buttons()
-        self.process_files(selected_files, removal_mode)
-        self.enable_buttons()
+        threading.Thread(target=self.process_files, args=(selected_files, removal_mode)).start()
 
     def process_files(self, selected_files, removal_mode):
-        processed_count = 0
-        for file_path in selected_files:
-            file_name = os.path.basename(file_path)
-            output_path = os.path.join(
-                self.output_folder_path,
-                file_name.replace(".docx", "_no_watermark.docx").replace(".pdf", "_no_watermark.pdf")
-            )
-            try:
-                if file_path.endswith(".pdf"):
-                    if removal_mode == "Fast Removal":
-                        result_path = remove_layer_watermarks(file_path)
-                    else:
-                        result_path = remove_watermark_from_pdf(file_path)
+        try:
+            processed_count = 0
+            for file_path in selected_files:
+                file_name = os.path.basename(file_path)
+                output_path = os.path.join(
+                    self.output_folder_path,
+                    file_name.replace(".docx", "_no_watermark.docx").replace(".pdf", "_no_watermark.pdf")
+                )
+                try:
+                    if file_path.endswith(".pdf"):
+                        if removal_mode == "Fast Removal":
+                            print(f"Fast Removal: {file_name}")
+                            result_path = remove_layer_watermarks(file_path)
+                        else:
+                            print(f"Deep Removal: {file_name}")
+                            result_path = remove_watermark_from_pdf(file_path)
 
-                    if result_path:
-                        os.rename(result_path, output_path)
-                        self.update_file_status(file_name, "Done")
-                    else:
-                        self.update_file_status(file_name, "Failed")
-                elif file_path.endswith(".docx"):
-                    result_path = remove_watermark_from_word(file_path)
-                    if result_path:
-                        os.rename(result_path, output_path)
-                        self.update_file_status(file_name, "Done")
-                    else:
-                        self.update_file_status(file_name, "Failed")
-            except Exception as e:
-                print(f"Error processing {file_name}: {e}")
-                self.update_file_status(file_name, "Failed")
+                        if result_path:
+                            os.rename(result_path, output_path)
+                            self.update_file_status(file_name, "Done")
+                        else:
+                            self.update_file_status(file_name, "Failed")
+                    elif file_path.endswith(".docx"):
+                        print(f"Processing Word file: {file_name}")
+                        result_path = remove_watermark_from_word(file_path)
+                        if result_path:
+                            os.rename(result_path, output_path)
+                            self.update_file_status(file_name, "Done")
+                        else:
+                            self.update_file_status(file_name, "Failed")
+                except Exception as e:
+                    print(f"Error processing {file_name}: {e}")
+                    self.update_file_status(file_name, "Failed")
 
-            processed_count += 1
-            self.progress_bar.setValue(processed_count)
+                processed_count += 1
+                QtCore.QTimer.singleShot(0, partial(self.progress_bar.setValue, processed_count))
 
-        self.show_message("Processing Complete", "All selected files have been processed.")
+            QtCore.QTimer.singleShot(0, partial(self.show_message, "Processing Complete", "All selected files have been processed."))
+        except Exception as e:
+            QtCore.QTimer.singleShot(0, partial(self.show_message, "Error", f"An error occurred: {e}"))
+        finally:
+            QtCore.QTimer.singleShot(0, partial(self.toggle_buttons, True))  # Re-enable buttons after processing
 
     def update_file_status(self, file_name, status):
         for i in range(self.file_list_widget.count()):
@@ -153,19 +167,13 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
                 item.setText(f"{file_name} - {status}")
                 break
 
-    def disable_buttons(self):
-        self.select_output_folder_button.setEnabled(False)
-        self.load_files_button.setEnabled(False)
-        self.select_all_button.setEnabled(False)
-        self.unselect_all_button.setEnabled(False)
-        self.execute_button.setEnabled(False)
-
-    def enable_buttons(self):
-        self.select_output_folder_button.setEnabled(True)
-        self.load_files_button.setEnabled(True)
-        self.select_all_button.setEnabled(True)
-        self.unselect_all_button.setEnabled(True)
-        self.execute_button.setEnabled(True)
+    def toggle_buttons(self, enable):
+        self.select_output_folder_button.setEnabled(enable)
+        self.load_files_button.setEnabled(enable)
+        self.select_all_button.setEnabled(enable)
+        self.unselect_all_button.setEnabled(enable)
+        self.removal_mode_dropdown.setEnabled(enable)
+        self.execute_button.setEnabled(enable)
 
     def show_message(self, title, message):
         QtWidgets.QMessageBox.information(self, title, message)
@@ -175,4 +183,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     window = WatermarkRemoverApp()
     window.show()
-    app.exec_()
+    app.exec()
