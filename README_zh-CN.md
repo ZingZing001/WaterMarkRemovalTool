@@ -107,7 +107,7 @@ def is_text_color_rgb(img_array):
     )
     return mask
 ```
-#### **is_text_color_hsv**
+#### **`is_text_color_hsv`**
 
 该函数使用 HSV 色彩空间检测图像中类似黑色或深色的区域，能够更好地应对光照和颜色变化。
 
