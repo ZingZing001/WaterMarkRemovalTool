@@ -1,87 +1,206 @@
-# 水印去除工具
+# 水印移除工具
 
-## 项目简介
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+<!-- language -->
 
-本项目是一个基于 Python 和 PyQt5 的水印去除工具，可以处理 PDF 和 Word 文件中的水印。支持快速和深度两种模式，用户可以通过直观的图形用户界面（GUI）选择文件并执行水印去除操作。
+[English](README.md) | [简体中文](README_zh-CN.md)
 
----
-
-## 功能特点
-
-- **支持文件类型：**
-  - PDF 文件
-  - Word 文件（.docx 格式）
-  
-- **水印去除模式：**
-  - **快速去除**：针对简单水印，处理速度快。
-  - **深度去除**：针对复杂水印，处理较为全面。
-
-- **批量处理：**
-  - 一次加载多个文件
-  - 支持多文件并行处理
-
-- **易用的界面：**
-  - 文件选择、全选/取消全选功能
-  - 文件状态实时更新
-  - 进度条显示处理进度
-  - 提示处理预计完成时间
+如果您觉得这个工具有用，请给我一个星星支持吧！🌟  
+求求留个星星呗🥺🌟
 
 ---
 
-## 安装步骤
+一个功能强大且用户友好的工具，用于从 PDF 和 Word 文档中移除水印。该应用程序提供快速移除和深度移除模式，可针对各种水印类型确保最佳效果。
 
-### 系统要求
+---
 
-- 操作系统：macOS 或 Windows
-- Python 版本：3.9 或以上
+## 功能
 
-### 安装依赖
+- **快速移除：** 快速从 PDF 文件中移除基于层的水印。
+- **深度移除：** 结合高级图像处理技术，移除文本和图像类型的水印。
+- **支持 Word 文件：** 移除 `.docx` 文件中的水印。
+- **批量处理：** 一次加载多个文件并批量处理。
+- **可定制模式：** 提供“快速移除”和“深度移除”两种模式选择。
+- **进度跟踪：** 提供可视化进度条和预计完成时间。
+- **跨平台支持：** 支持 Windows、macOS 和 Linux。
 
-1. 确保已安装 Python 和 pip。
-2. 使用以下命令安装依赖：
+---
+
+## 前置条件
+
+确保您已安装 Python 3.9 或更高版本。此外，请安装 `requirements.txt` 中列出的依赖项。
+
+---
+
+## 安装
+
+1. 克隆此代码仓库：
+    ```bash
+    git clone https://github.com/yourusername/watermark-remover.git
+    cd watermark-remover
+    ```
+
+2. 安装依赖项：
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. 安装 Poppler 以支持 PDF 处理：
+    - **macOS:**
+        ```bash
+        brew install poppler
+        ```
+    - **Ubuntu:**
+        ```bash
+        sudo apt-get install poppler-utils
+        ```
+    - **Windows:**
+        从 [Poppler for Windows](http://blog.alivate.com.au/poppler-windows/) 下载 Poppler 二进制文件，并将 `bin` 文件夹添加到 PATH 环境变量。
+
+---
+
+## 使用方法
+
+### 图形界面模式
+
+1. 启动工具：
+    ```bash
+    python prod.py
+    ```
+2. 选择一个输出文件夹用于存储处理后的文件。
+3. 从文件夹中加载要处理的文件。
+4. 选择移除模式：**快速移除** 或 **深度移除**。
+5. 选择需要处理的文件并点击 **执行**。
+
+### 命令行模式（用于测试或集成）
+- 您可以在代码中直接调用 `removerPdf.py` 和 `removerWord.py` 中的函数进行处理。
+
+---
+
+### 函数解释：`is_text_color_rgb` 和 `is_text_color_hsv`
+
+这两个函数用于检测图像中的黑色或近黑色文本（或水印）。可以通过调整阈值来适应不同类型的水印。
+
+#### **`is_text_color_rgb`**
+该函数使用 RGB 色彩空间检测图像中的黑色或近黑色像素。
+
+##### **工作原理：**
+1. **RGB 阈值判断：**
+   - 函数判断像素的三个通道（红、绿、蓝）的强度值是否均小于 `140`。
+   - 满足条件的像素被认为是“深色”，可能代表文本或水印内容。
+
+2. **适配水印：**
+   - **提高阈值（`140 → 更高`）：** 用于检测浅灰色或较淡的黑色文本。
+   - **降低阈值（`140 → 更低`）：** 更专注于检测纯黑色像素，排除较浅的标记。
+
+3. **示例用例：**
+   - 适用于检测纯黑色或灰色的文本水印。
+
+##### **代码：**
+```python
+def is_text_color_rgb(img_array):
+    # 使用 RGB 色彩空间识别黑色或近黑色像素
+    mask = (
+        (img_array[:, :, 0] < 140) &  # 红色通道阈值
+        (img_array[:, :, 1] < 140) &  # 绿色通道阈值
+        (img_array[:, :, 2] < 140)    # 蓝色通道阈值
+    )
+    return mask
+```
+#### **is_text_color_hsv**
+
+该函数使用 HSV 色彩空间检测图像中类似黑色或深色的区域，能够更好地应对光照和颜色变化。
+
+##### **工作原理：**
+
+**1. HSV 转换：**
+  - 将图像转换为 HSV 色彩空间。
+  - 忽略色调（Hue, H），因为黑色不依赖特定颜色，仅分析饱和度（Saturation, S）和亮度（Value, V）。
+    
+**2. 阈值判断：**
+  - 饱和度（`S < 40`）：确保该区域不含丰富的颜色（低饱和度意味着灰色或黑色）。
+  - 亮度（`V < 160`）：确保该区域是深色（较低的值表示更暗的像素）。
+    
+**3. 适配水印：**
+  - 提高饱和度阈值（`S < 40 → 更高`）：包含更多带色彩的水印。
+  - 提高亮度阈值（`V < 160 → 更高`）：包含更浅的文本或水印。
+    
+**4. 示例用例：**
+  - 适用于检测浅色、带色彩的深色水印。
+    
+##### **代码：**
+```python
+def is_text_color_hsv(img_array):
+    # 将 RGB 图像转换为 HSV
+    hsv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2HSV)
+
+    # 使用 HSV 色彩空间识别深色或黑色区域
+    mask = (hsv_img[:, :, 1] < 40) & (hsv_img[:, :, 2] < 160)  # 饱和度和亮度阈值
+    return mask
+```
+
+## 文件结构
+  - prod.py： 主图形界面应用程序文件。
+  - removerPdf.py： 用于处理和移除 PDF 文件水印的函数。
+  - removerWord.py： 用于处理和移除 Word 文件水印的函数。
+  - requirements.txt： 列出了所需的 Python 库。
+
+
+## 依赖项
+
+**工具依赖以下 Python 库：**
+
+```
+PySide6
+pymupdf
+pdf2image
+numpy
+scikit-image
+Pillow
+python-docx
+```
+
+**使用以下命令安装这些依赖项：**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 使用方法
+## 示例
 
-### 运行程序
+  - 处理前：
+![Screenshot 2024-11-21 at 16 20 55](https://github.com/user-attachments/assets/9f95b3db-08e3-4e10-a9da-293cda385d2a)
+    
+  - 处理后：
+![Screenshot 2024-11-21 at 16 20 57](https://github.com/user-attachments/assets/978c33b7-eb59-4de3-b71b-ddef5c4b9b24)
 
-在终端中运行以下命令：
+## 已知问题
 
-```bash
-python prod.py
-```
+### **内存占用：**
+  - 处理较大的 PDF 文件时可能会消耗大量内存。工具会将中间处理结果保存到磁盘以缓解内存压力。
 
-## 项目结构
-.
-├── prod.py                # 主程序
-├── removerPdf.py          # PDF 文件水印去除逻辑
-├── removerWord.py         # Word 文件水印去除逻辑
-├── requirements.txt       # 项目依赖文件
-└── README.md              # 项目说明文件
+### **响应速度：**
+  - 在深度移除模式下，GUI 可能会变得不太响应。
 
----
+## 特别感谢
 
-## 特别鸣谢
+**特别感谢以下库和工具的开发者和维护者，这些开源项目为本工具的开发提供了强大的支持：**
 
-在此特别感谢以下开源库的作者和贡献者：
+- **[PyQt5](https://pypi.org/project/PyQt5/):** 用于创建现代化用户界面的强大工具。
+- **[PyMuPDF](https://pymupdf.readthedocs.io/):** 提供了强大的 PDF 文档操作功能。
+- **[pdf2image](https://pypi.org/project/pdf2image/):** 实现无缝的 PDF 到图像转换。
+- **[NumPy](https://numpy.org/):** 用于高效的数组操作和数学运算。
+- **[scikit-image](https://scikit-image.org/):** 提供了高级图像处理能力。
+- **[Pillow](https://pillow.readthedocs.io/):** 用于多功能的图像操作。
+- **[python-docx](https://python-docx.readthedocs.io/):** 用于处理 Word 文档。
+- **[Poppler](https://poppler.freedesktop.org/):** 用于 PDF 渲染和转换。
 
-- [PyPDF2](https://pypdf2.readthedocs.io/en/latest/)
-- [python-docx](https://python-docx.readthedocs.io/en/latest/)
-- [pdf2image](https://github.com/Belval/pdf2image)
-- [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/)
-- [PyQt5](https://riverbankcomputing.com/software/pyqt/intro)
-- [NumPy](https://numpy.org/)
-- [OpenCV](https://opencv.org/)
-- [Pillow](https://python-pillow.org/)
-- [scikit-image](https://scikit-image.org/)
+**您的辛勤付出不仅使本项目得以实现，还帮助全球开发者创造了无数创新的解决方案。**
 
----
+**感谢您对开源社区的无价贡献！❤️**
 
-## 联系我们
+## 许可证
 
-如有问题或建议，请随时提交 [Issue](https://github.com/ZingZing001/WaterMarkRemoverTool/issues) 或通过邮箱与我们联系：
+本项目基于 MIT 许可证开源。详情请见 [LICENSE](LICENSE)
 
-- 邮箱：runjiazhang.nz@gmail.com
+
