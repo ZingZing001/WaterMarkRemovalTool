@@ -5,3 +5,4 @@ numpy
 scikit-image
 Pillow
 python-docx
+opencv-python
