@@ -54,8 +54,7 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
         sudo apt-get install poppler-utils
         ```
     - **Windows:**
-        Download Poppler binaries from [Poppler for Windows](http://blog.alivate.com.au/poppler-windows/) and add the `bin` folder to your PATH.
-
+        Download Poppler binaries from [Poppler for Windows](http://blog.alivate.com.au/poppler-windows/) and add the `bin` folder to your PATH. **NOT WORKING RN**
 ---
 
 ## Usage
