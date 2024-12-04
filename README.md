@@ -6,7 +6,7 @@
 [English](README.md) | [简体中文](README_zh-CN.md)
 
 Plz leave me with a star if you think this tool is useful :)🌟
-求求留个星星呗🥺🌟
+
 
 A powerful and user-friendly tool for removing watermarks from PDF and Word documents. This application provides both fast and deep removal modes, ensuring optimal results for various watermark types.
 
