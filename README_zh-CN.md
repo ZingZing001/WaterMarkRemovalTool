@@ -80,6 +80,8 @@
 
 ### 函数解释：`is_text_color_rgb` 和 `is_text_color_hsv`
 
+**注意：我在注释中添加了一些颜色和 HSV 预设，此方法可以保证移除具有特定颜色的水印；可以尝试调整这些值进行测试。**
+
 这两个函数用于检测图像中的黑色或近黑色文本（或水印）。可以通过调整阈值来适应不同类型的水印。
 
 #### **`is_text_color_rgb`**
@@ -152,13 +154,14 @@ def is_text_color_hsv(img_array):
 **工具依赖以下 Python 库：**
 
 ```
-PySide6
-pymupdf
-pdf2image
-numpy
-scikit-image
-Pillow
-python-docx
+PyQt5==5.15.9
+pikepdf==6.2.6
+PyMuPDF==1.21.1
+pdf2image==1.16.3
+Pillow==9.4.0
+opencv-python-headless==4.8.0.76
+scikit-image==0.19.3
+PyPDF2==3.0.1
 ```
 
 **使用以下命令安装这些依赖项：**
@@ -195,6 +198,7 @@ pip install -r requirements.txt
 - **[Pillow](https://pillow.readthedocs.io/):** 用于多功能的图像操作。
 - **[python-docx](https://python-docx.readthedocs.io/):** 用于处理 Word 文档。
 - **[Poppler](https://poppler.freedesktop.org/):** 用于 PDF 渲染和转换。
+- **[pikepdf](https://github.com/pikepdf/pikepdf):** 用于快速水印移除处理
 
 **您的辛勤付出不仅使本项目得以实现，还帮助全球开发者创造了无数创新的解决方案。**
 
