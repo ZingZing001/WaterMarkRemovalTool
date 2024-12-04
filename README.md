@@ -205,6 +205,7 @@ A heartfelt thank you to the authors and maintainers of the following libraries 
 - **[Pillow](https://pillow.readthedocs.io/):** For versatile image manipulation and saving functionalities.
 - **[python-docx](https://python-docx.readthedocs.io/):** For enabling the manipulation of Word documents.
 - **[Poppler](https://poppler.freedesktop.org/):** For handling PDF rendering and conversion.
+- **[pikepdf](https://github.com/pikepdf/pikepdf):** For handling Fast WaterMark Removal
 
 Your hard work and dedication have not only made this project possible but also helped countless developers worldwide to create innovative solutions. 
 
