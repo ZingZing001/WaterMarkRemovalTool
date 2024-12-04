@@ -94,7 +94,9 @@ This function identifies black or near-black pixels in an image using the RGB co
    - Ideal for detecting solid black or grayscale text-based watermarks.
 
 ##### **Code:**
-NOTE: I have added some colour and HSV preset in the comments form; this method is guaranteed to remove the watermarks with a certain colour; try to playing around with the values.
+
+NOTE: I have added some color and HSV presets in the comments. This method is guaranteed to remove watermarks of a certain color. Try playing around with the values.
+
 ```python
 def is_text_color_rgb(img_array):
     # Identify black or near-black pixels in RGB color space
