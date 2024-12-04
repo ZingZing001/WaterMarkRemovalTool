@@ -74,7 +74,7 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
             sorted_files = sorted(files)  # Sort files alphabetically
             for file_name in sorted_files:
                 file_path = os.path.join(folder_path, file_name)
-                if os.path.isfile(file_path) and (file_name.endswith(".pdf") or file_name.endswith(".docx")):
+                if os.path.isfile(file_path) and (file_name.endswith(".pdf") or file_name.endswith(".docx") or file_name.endswith(".PDF") or file_name.endswith(".doc")):
                     self.file_paths.append(file_path)
                     item = QtWidgets.QListWidgetItem(file_name)
                     item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
@@ -117,48 +117,51 @@ class WatermarkRemoverApp(QtWidgets.QWidget):
         threading.Thread(target=self.process_files, args=(selected_files, removal_mode)).start()
 
     def process_files(self, selected_files, removal_mode):
-        try:
-            processed_count = 0
-            for file_path in selected_files:
-                file_name = os.path.basename(file_path)
-                output_path = os.path.join(
-                    self.output_folder_path,
-                    file_name.replace(".docx", "_no_watermark.docx").replace(".pdf", "_no_watermark.pdf")
-                )
-                try:
-                    if file_path.endswith(".pdf"):
-                        if removal_mode == "Fast Removal":
-                            print(f"Fast Removal: {file_name}")
-                            result_path = remove_layer_watermarks(file_path)
-                        else:
-                            print(f"Deep Removal: {file_name}")
-                            result_path = remove_watermark_from_pdf(file_path)
+      try:
+        processed_count = 0
+        for file_path in selected_files:
+            file_name = os.path.basename(file_path)
+            output_path = os.path.join(
+                self.output_folder_path,
+                file_name.replace(".docx", ".docx").replace(".pdf", ".pdf").replace(".PDF", ".pdf").replace(".doc", ".doc")
+            )
+            try:
+                result_path = None  # Initialize result_path to prevent reference issues
+                if file_path.endswith(".pdf") or file_name.endswith(".PDF"):
+                    if removal_mode == "Fast Removal":
+                        print(f"Fast Removal: {file_name}")
+                        result_message = remove_layer_watermarks(file_path, output_path)
+                        print(result_message)
+                        result_path = output_path  # Use output_path directly for Fast Removal
+                    else:
+                        print(f"Deep Removal: {file_name}")
+                        result_path = remove_watermark_from_pdf(file_path)
 
-                        if result_path:
-                            os.rename(result_path, output_path)
-                            self.update_file_status(file_name, "Done")
-                        else:
-                            self.update_file_status(file_name, "Failed")
-                    elif file_path.endswith(".docx"):
-                        print(f"Processing Word file: {file_name}")
-                        result_path = remove_watermark_from_word(file_path)
-                        if result_path:
-                            os.rename(result_path, output_path)
-                            self.update_file_status(file_name, "Done")
-                        else:
-                            self.update_file_status(file_name, "Failed")
-                except Exception as e:
-                    print(f"Error processing {file_name}: {e}")
-                    self.update_file_status(file_name, "Failed")
+                    if result_path and os.path.exists(result_path):
+                        os.rename(result_path, output_path)
+                        self.update_file_status(file_name, "Done")
+                    else:
+                        self.update_file_status(file_name, "Failed")
+                elif file_path.endswith(".docx") or file_name.endswith(".doc"):
+                    print(f"Processing Word file: {file_name}")
+                    result_path = remove_watermark_from_word(file_path)
+                    if result_path and os.path.exists(result_path):
+                        os.rename(result_path, output_path)
+                        self.update_file_status(file_name, "Done")
+                    else:
+                        self.update_file_status(file_name, "Failed")
+            except Exception as e:
+                print(f"Error processing {file_name}: {e}")
+                self.update_file_status(file_name, "Failed")
 
-                processed_count += 1
-                QtCore.QTimer.singleShot(0, partial(self.progress_bar.setValue, processed_count))
+            processed_count += 1
+            QtCore.QTimer.singleShot(0, partial(self.progress_bar.setValue, processed_count))
 
-            QtCore.QTimer.singleShot(0, partial(self.show_message, "Processing Complete", "All selected files have been processed."))
-        except Exception as e:
-            QtCore.QTimer.singleShot(0, partial(self.show_message, "Error", f"An error occurred: {e}"))
-        finally:
-            QtCore.QTimer.singleShot(0, partial(self.toggle_buttons, True))  # Re-enable buttons after processing
+        QtCore.QTimer.singleShot(0, partial(self.show_message, "Processing Complete", "All selected files have been processed."))
+      except Exception as e:
+          QtCore.QTimer.singleShot(0, partial(self.show_message, "Error", f"An error occurred: {e}"))
+      finally:
+          QtCore.QTimer.singleShot(0, partial(self.toggle_buttons, True))  # Re-enable buttons after processing
 
     def update_file_status(self, file_name, status):
         for i in range(self.file_list_widget.count()):

@@ -192,7 +192,7 @@ def remove_watermark_from_pdf(file_path):
             gc.collect()
 
         # Step 2: Merge processed images into a single PDF incrementally
-        final_pdf_path = file_path
+        final_pdf_path = file_path.replace(".pdf", "_no_watermark.pdf")
         with Image.open(modified_images[0]).convert("RGB") as first_image:
             first_image.save(
                 final_pdf_path,
