@@ -65,6 +65,7 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
     ```bash
     python prod.py
     ```
+    
 2. Select an output folder for processed files.
 3. Load files from a folder to process.
 4. Choose removal mode: **Fast Removal** or **Deep Removal**.
@@ -93,6 +94,7 @@ This function identifies black or near-black pixels in an image using the RGB co
    - Ideal for detecting solid black or grayscale text-based watermarks.
 
 ##### **Code:**
+NOTE: I have added some colour and HSV preset in the comments form; this method is guaranteed to remove the watermarks with a certain colour; try to playing around with the values.
 ```python
 def is_text_color_rgb(img_array):
     # Identify black or near-black pixels in RGB color space
@@ -158,16 +160,17 @@ By modifying the threshold values, you can adapt the functions to detect specifi
 
 The tool depends on the following Python libraries:
 ```text
-PyQt5
-pymupdf
-pdf2image
-numpy
-scikit-image
-Pillow
-python-docx
+PyQt5==5.15.9
+pikepdf==6.2.6
+PyMuPDF==1.21.1
+pdf2image==1.16.3
+Pillow==9.4.0
+opencv-python-headless==4.8.0.76
+scikit-image==0.19.3
+PyPDF2==3.0.1
 ```
 Install these dependencies using `pip install -r requirements.txt`.
-
+or if u prefer to have it installed in your public environment using `python -m pip install -r requirements.txt`
 
 ---
 
@@ -183,7 +186,7 @@ Install these dependencies using `pip install -r requirements.txt`.
 ## Known Issues
 
 ### Memory Usage: 
-- Processing large PDFs may consume a significant amount of memory. The tool saves intermediate images to the disk to mitigate this.
+- Processing large PDFs may consume a significant amount of memory. The tool saves intermediate images to the disk to mitigate this. (SOLVED)
 
 ### Responsiveness: 
 - The GUI may become unresponsive during intensive operations in Deep Removal mode.
