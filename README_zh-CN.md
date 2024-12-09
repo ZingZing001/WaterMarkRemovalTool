@@ -12,6 +12,8 @@
 
 一个功能强大且用户友好的工具，用于从 PDF 和 Word 文档中移除水印。该应用程序提供快速移除和深度移除模式，可针对各种水印类型确保最佳效果。
 
+我已经放出了一个可直接运行程序在[Release](https://github.com/ZingZing001/WaterMarkRemovalTool/releases)，请确保poppler可以在您的系统里运行。
+
 注意⚠️：Windows 系统需要装Linux VM，在Linux环境下使用。（因为Poppler-Utils 现已不支持Windows）
 ---
 
