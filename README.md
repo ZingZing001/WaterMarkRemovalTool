@@ -163,13 +163,13 @@ By modifying the threshold values, you can adapt the functions to detect specifi
 
 The tool depends on the following Python libraries:
 ```text
-PyQt5==5.15.9
-pikepdf==6.2.6
-PyMuPDF==1.21.1
-pdf2image==1.16.3
-Pillow==9.4.0
-opencv-python-headless==4.8.0.76
-scikit-image==0.19.3
+PyQt5==5.15.11
+pikepdf==9.4.2
+PyMuPDF==1.24.13
+pdf2image==1.17.0
+Pillow==11.0.0
+opencv-python==4.10.0.84
+scikit-image==0.24.0
 PyPDF2==3.0.1
 ```
 Install these dependencies using `pip install -r requirements.txt`.
