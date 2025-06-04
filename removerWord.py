@@ -1,23 +1,28 @@
 from docx import Document
 
+
 def remove_watermark_from_word(file_path):
+    """Remove headers and footers from a Word document.
+
+    The previous implementation attempted to call ``Paragraph.clear`` which is
+    not available in ``python-docx`` and resulted in an ``AttributeError`` at
+    runtime. This function now clears the text of each paragraph found in the
+    header and footer sections and saves the result to a new file.
+    """
+
     try:
-        # Load the document
         doc = Document(file_path)
-        
-        # Iterate over all sections to clear headers and footers
+
         for section in doc.sections:
-            # Clear header and footer content
             header = section.header
             for paragraph in header.paragraphs:
-                paragraph.clear()  # Clears all text and elements in the header
-            
+                paragraph.text = ""
+
             footer = section.footer
             for paragraph in footer.paragraphs:
-                paragraph.clear()  # Clears all text and elements in the footer
-        
-        # Save the modified document
-        output_path = file_path.replace(".docx", ".docx")
+                paragraph.text = ""
+
+        output_path = file_path.replace(".docx", "_no_watermark.docx")
         doc.save(output_path)
         return output_path
     except Exception as e:
