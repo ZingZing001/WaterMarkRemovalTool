@@ -78,6 +78,31 @@
 ### 命令行模式（用于测试或集成）
 - 您可以在代码中直接调用 `removerPdf.py` 和 `removerWord.py` 中的函数进行处理。
 
+您也可以在没有图形界面的情况下运行 `cli.py`：
+
+```bash
+python cli.py INPUT_PATH --output OUTPUT_DIR --mode {fast/deep}
+```
+
+或简写为：
+
+```bash
+python cli.py INPUT_PATH -o OUTPUT_DIR -m {fast/deep}
+```
+
+**注意：**
+
+- `--mode` 或 `-m` 默认采用快速移除，如需深度移除请使用 `-m deep`。
+- `INPUT_PATH` 可以是单个文件，也可以是包含多个 PDF 或 Word 文档的目录。`--mode` 控制 PDF 的处理方式，默认值为 `fast`。
+
+**测试：**
+
+- 可以使用 `./test` 目录中的测试文件验证深度移除：
+
+```bash
+python cli.py ./test/test.pdf -o ./out --mode deep
+```
+
 ---
 
 ### 函数解释：`is_text_color_rgb` 和 `is_text_color_hsv`
