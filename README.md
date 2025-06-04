@@ -35,27 +35,34 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 ## Installation
 
 1. Clone the repository:
+
     ```bash
     git clone https://github.com/ZingZing001/watermark-remover.git
     cd watermark-remover
     ```
 
 2. Install the dependencies:
+
     ```bash
     pip install -r requirements.txt
     ```
 
 3. Install Poppler for PDF processing:
     - **macOS:**
+
         ```bash
         brew install poppler
         ```
+
     - **Ubuntu:**
+
         ```bash
         sudo apt-get install poppler-utils
         ```
+
     - **Windows:**
         Download Poppler binaries from [Poppler for Windows](http://blog.alivate.com.au/poppler-windows/) and add the `bin` folder to your PATH. **NOT WORKING RN**
+
 ---
 
 ## Usage
@@ -63,35 +70,57 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 ### GUI Mode
 
 1. Launch the tool:
+
     ```bash
     python prod.py
     ```
-    
+
 2. Select an output folder for processed files.
 3. Load files from a folder to process.
 4. Choose removal mode: **Fast Removal** or **Deep Removal**.
 5. Select the files to process and click **Execute**.
 
 ### Command Line Mode
+
 You can run watermark removal without the GUI using `cli.py`:
 
 ```bash
-python cli.py INPUT_PATH --output OUTPUT_DIR [--mode fast|deep]
+python cli.py INPUT_PATH --output OUTPUT_DIR --mode {fast/deep}
 ```
 
-`INPUT_PATH` can be a single file or a directory containing multiple PDFs or
+or in shorthand:
+
+```bash
+python cli.py INPUT_PATH -o OUTPUT_DIR -m {fast/deep}
+```
+
+**NB:**
+
+- '--mode or -m' are defaulted to be fast removal, change to deep demoval by using '-m deep'
+
+- `INPUT_PATH` can be a single file or a directory containing multiple PDFs or
 Word documents. The `--mode` option controls how PDFs are processed and
 defaults to `fast`.
+
+**Testing:**
+
+- Can use the test file located in the ./test folder to test all your modules for deep removal:
+
+```bash
+python cli.py ./test/test.pdf -o ./out --mode deep
+```
 
 ### Function Explanation: `is_text_color_rgb` and `is_text_color_hsv`
 
 These two functions are designed to detect black or near-black text (or watermarks) in an image. You can adjust the thresholds to adapt to different kinds of watermarks.
 
 #### **`is_text_color_rgb`**
+
 This function identifies black or near-black pixels in an image using the RGB colour space.
 
 ##### **How it works:**
-1. **RGB Thresholding:** 
+
+1. **RGB Thresholding:**
    - The function checks if the intensity values of all three channels (Red, Green, and Blue) are less than `140`.
    - Pixels meeting this condition are considered "dark," representing text or watermark content.
 
@@ -118,12 +147,16 @@ def is_text_color_rgb(img_array):
 ```
 
 #### **is_text_color_hsv**
+
 This function identifies black-like or dark regions in the HSV (Hue, Saturation, Value) color space, which is more robust for varying lighting and color tones.
 
 #### **How it works:**
+
 1. **HSV Conversion:**
     - The image is converted to the HSV color space.
-	- Hue (H) is ignored because black is not dependent on specific colors. Instead, Saturation (S) and Value (V) are analyzed.
+
+- Hue (H) is ignored because black is not dependent on specific colors. Instead, Saturation (S) and Value (V) are analyzed.
+
 2. **Thresholding:**
     - Saturation (S < 40): Ensures the region is not colorful (low saturation means grayscale or black).
     - Value (V < 160): Ensures the region is dark (lower values indicate darker pixels).
@@ -136,6 +169,7 @@ This function identifies black-like or dark regions in the HSV (Hue, Saturation,
     - Particularly useful for detecting faintly tinted or dark watermarks.
 
 #### **Code:**
+
 ```python
 def is_text_color_hsv(img_array):
     # Convert the RGB image to HSV
@@ -149,13 +183,14 @@ def is_text_color_hsv(img_array):
 ### Customizing for Different Watermarks
 
 By modifying the threshold values, you can adapt the functions to detect specific types of watermarks:
+
 1. **Light Gray Watermarks:**
     - Increase 140 in is_text_color_rgb and V < 160 in is_text_color_hsv to include lighter shades.
 2. **Faint Colored Watermarks:**
     - Increase the S threshold in is_text_color_hsv to include more color.
 3. **Dark and Clear Watermarks:**
     - Lower all thresholds (R/G/B < 140, S < 40, V < 160) to focus on darker and clearer watermarks.
-      
+
 ---
 
 ## File Structure
@@ -170,6 +205,7 @@ By modifying the threshold values, you can adapt the functions to detect specifi
 ## Dependencies
 
 The tool depends on the following Python libraries:
+
 ```text
 PyQt5==5.15.11
 pikepdf==9.4.2
@@ -180,12 +216,14 @@ opencv-python==4.10.0.84
 scikit-image==0.24.0
 PyPDF2==3.0.1
 ```
+
 Install these dependencies using `pip install -r requirements.txt`.
 or if u prefer to have it installed in your public environment using `python -m pip install -r requirements.txt`
 
 ---
 
 ## Exampler
+
 - Before
 ![Screenshot 2024-11-21 at 16 20 55](https://github.com/user-attachments/assets/9f95b3db-08e3-4e10-a9da-293cda385d2a)
 
@@ -196,10 +234,12 @@ or if u prefer to have it installed in your public environment using `python -m 
 
 ## Known Issues
 
-### Memory Usage: 
+### Memory Usage
+
 - Processing large PDFs may consume a significant amount of memory. The tool saves intermediate images to the disk to mitigate this. (SOLVED)
 
-### Responsiveness: 
+### Responsiveness
+
 - The GUI may become unresponsive during intensive operations in Deep Removal mode.
 
 ---
@@ -218,7 +258,7 @@ A heartfelt thank you to the authors and maintainers of the following libraries 
 - **[Poppler](https://poppler.freedesktop.org/):** For handling PDF rendering and conversion.
 - **[pikepdf](https://github.com/pikepdf/pikepdf):** For handling Fast WaterMark Removal
 
-Your hard work and dedication have not only made this project possible but also helped countless developers worldwide to create innovative solutions. 
+Your hard work and dedication have not only made this project possible but also helped countless developers worldwide to create innovative solutions.
 
 **Thank you for your invaluable contributions to the open-source community! ❤️**
 
