@@ -72,8 +72,16 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 4. Choose removal mode: **Fast Removal** or **Deep Removal**.
 5. Select the files to process and click **Execute**.
 
-### Command Line Mode (for testing or integration)
-- You can use the functions in `removerPdf.py` and `removerWord.py` programmatically.
+### Command Line Mode
+You can run watermark removal without the GUI using `cli.py`:
+
+```bash
+python cli.py INPUT_PATH --output OUTPUT_DIR [--mode fast|deep]
+```
+
+`INPUT_PATH` can be a single file or a directory containing multiple PDFs or
+Word documents. The `--mode` option controls how PDFs are processed and
+defaults to `fast`.
 
 ### Function Explanation: `is_text_color_rgb` and `is_text_color_hsv`
 
