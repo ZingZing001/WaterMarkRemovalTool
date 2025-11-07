@@ -37,7 +37,7 @@ Ensure you have Python 3.9 or later installed. Additionally, install the depende
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/ZingZing001/watermark-remover.git
+    git clone https://github.com/ZingZing001/WaterMarkRemovalTool.git
     cd watermark-remover
     ```
 
