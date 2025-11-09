@@ -14,7 +14,7 @@
 
 我已经放出了一个可直接运行程序在[Release](https://github.com/ZingZing001/WaterMarkRemovalTool/releases)，请确保poppler可以在您的系统里运行。
 
-注意⚠️：Windows 系统需要装Linux VM，在Linux环境下使用。（因为Poppler-Utils 现已不支持Windows）
+注意⚠️：Windows 系统需要使用 ANACONDA 环境， 环境配置文件在最新的RELEASE里，只需导入环境配置文件（WaterMarkRemovalEnv.yaml)进入anaconda即可。
 ---
 
 ## 功能
