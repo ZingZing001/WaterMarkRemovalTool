@@ -11,7 +11,7 @@ Plz leave me with a star if you think this tool is useful :)🌟
 
 A powerful and user-friendly tool for removing watermarks from PDF and Word documents. This application provides both fast and deep removal modes, ensuring optimal results for various watermark types.
 
-NOTE: THIS TOOL ISN'T OPERATING CORRECTLY ON WINDOWS SYSTEM ATM DUE TO INSTALLATION OF POPPLER-UTILS (LINUX VM REQUIRED)
+NOTE: THIS TOOL CAN BE USED ON WINDOWS ONLY THROUGH ANACONDA (CHECKOUT THE RELEASE NOTE)
 ---
 
 ## Features
